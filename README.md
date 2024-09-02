@@ -3,7 +3,7 @@
 The hosted Aviary Explorer is not available anymore.
 Visit [Anyscale](https://endpoints.anyscale.com) to experience models served with RayLLM.
 
-[![Build status](https://badge.buildkite.com/d6d7af987d1db222827099a953410c4e212b32e8199ca513be.svg?branch=master)](https://buildkite.com/anyscale/aviary-docker)
+[![Build status](https://badge.buildkite.com/d6d7af987d1db222827099a953410c4e212b32e8199ca513be.svg?branch=main)](https://buildkite.com/anyscale/aviary-docker)
 
 RayLLM (formerly known as Aviary) is an LLM serving solution that makes it easy to deploy and manage
 a variety of open source LLMs, built on [Ray Serve](https://docs.ray.io/en/latest/serve/index.html). It does this by:
@@ -20,7 +20,7 @@ a variety of open source LLMs, built on [Ray Serve](https://docs.ray.io/en/lates
 
 In addition to LLM serving, it also includes a CLI and a web frontend (Aviary Explorer) that you can use to compare the outputs of different models directly, rank them by quality, get a cost and latency estimate, and more.
 
-RayLLM supports continuous batching and quantization by integrating with [vLLM](https://github.com/vllm-project/vllm). Continuous batching allows you to get much better throughput and latency than static batching. Quantization allows you to deploy compressed models with cheaper hardware requirements and lower inference costs. See [quantization guide](models/continuous_batching/quantization/README.md) for more details on running quantized models on RayLLM.
+RayLLM supports continuous batching and quantization by integrating with [vLLM](z). Continuous batching allows you to get much better throughput and latency than static batching. Quantization allows you to deploy compressed models with cheaper hardware requirements and lower inference costs. See [quantization guide](models/continuous_batching/quantization/README.md) for more details on running quantized models on RayLLM.
 
 RayLLM leverages [Ray Serve](https://docs.ray.io/en/latest/serve/index.html), which has native support for autoscaling
 and multi-node deployments. RayLLM can scale to zero and create
@@ -73,12 +73,12 @@ ray up deploy/ray/rayllm-cluster.yaml
 
 #### Connect to your Cluster
 
-```shell
+```shell 
 # Connect to the Head node of your Ray Cluster (This will take several minutes to autoscale)
 ray attach deploy/ray/rayllm-cluster.yaml
 
 # Deploy the LightGPT model. 
-serve run serve_configs/amazon--LightGPT.yaml
+serve run serve_configs/meta-llama--Llama-2-7b-chat-hf.yaml
 ```
 
 You can deploy any model in the `models` directory of this repo,
@@ -274,7 +274,7 @@ The easiest way is to copy the configuration of the existing model's YAML file a
 
 ## How do I deploy multiple models at once?
 
-Run multiple models at once by aggregating the Serve configs for different models into a single, unified config. For example, use this config to run the `LightGPT` and `Llama-2-7b-chat` model in a single Serve application:
+Run multiple models at once by aggregating the Serve configs for different models into a single, unified config. For example, use this config to run the `LightGPT` , `meta-llama--Llama-2-13b-chat-hf` and `Llama-2-7b-chat` model in a single Serve application:
 
 ```yaml
 # File name: serve_configs/config.yaml
@@ -287,6 +287,8 @@ applications:
     models:
       - ./models/continuous_batching/amazon--LightGPT.yaml
       - ./models/continuous_batching/meta-llama--Llama-2-7b-chat-hf.yaml
+      - ./models/continuous_batching/meta-llama--Llama-2-13b-chat-hf.yaml
+      -
 ```
 
 The config includes both models in the `model` argument for the `router`. Additionally, the Serve configs for both model applications are included. Save this unified config file to the `serve_configs/` folder.
@@ -343,3 +345,28 @@ Feel free to post an issue first to get our feedback on a proposal first, or jus
 We use `pre-commit` hooks to ensure that all code is formatted correctly.
 Make sure to `pip install pre-commit` and then run `pre-commit install`.
 You can also run `./format` to run the hooks manually.
+
+
+
+-----------------------------------------------------------------------------------------------------
+
+So we have 6 T4 gpu
+
+we also have A100 gpus but we have to use T4 gpu
+
+Note :
+
+we are going to use 
+
+1. meta-llama--Llama-2-7b-chat-hf.yaml
+
+2. meta-llama--Llama-2-13b-chat-hf 
+
+Most probably we have cpu which is NC_as_T4_v3 : it is 16gb T4 GPU  
+
+
+Note : Amazon Light GPT is  no longer working it may be private or private by Amazon 
+
+
+
+similar to EBS we have azure manage disk 

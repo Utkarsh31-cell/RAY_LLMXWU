@@ -34,6 +34,7 @@ See: [ray-project/ray-llm "Deploying RayLLM"](https://github.com/ray-project/ray
 ### Example
 
 Requires a machine with compatible NVIDIA A10 GPU and valid `HUGGING_FACE_HUB_TOKEN` to run the [Amazon LightGPT model](https://huggingface.co/amazon/LightGPT):
+[Llama-2-7b-chat model] (https://huggingface.co/meta-llama/Llama-2-7b-chat)
 
 ```sh
 docker run \
@@ -42,10 +43,9 @@ docker run \
     --shm-size 1g \
     -p 8000:8000 \
     --entrypoint rayllm \
-    anyscale/ray-llm:latest run --model models/continuous_batching/amazon--LightGPT.yaml
+    anyscale/ray-llm:latest run --model models/continuous_batching/meta-llama--Llama-2-7b-chat-hf.yaml
 ```
 
 # Source
 
 Source is available at https://github.com/ray-project/ray-llm
-

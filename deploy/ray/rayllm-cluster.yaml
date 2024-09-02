@@ -3,8 +3,8 @@ cluster_name: rayllm-deploy
 
 # Cloud-provider specific configuration.
 provider:
-    type: aws
-    region: us-west-2
+    type: azure
+    region: eastus2
     cache_stopped_nodes: False
 docker:
     image: "anyscale/ray-llm:latest"
@@ -18,7 +18,7 @@ setup_commands:
     - echo "(conda activate || true)" >> ~/.bashrc
 
 head_setup_commands:
-    - (conda activate || true) && pip install 'boto3>=1.4.8'
+    - (conda activate || true) && pip install 'azure-mgmt-compute>=4.0.0'
 
 worker_setup_commands: []
 
@@ -28,60 +28,38 @@ head_start_ray_commands:
 
 worker_start_ray_commands:
     - (conda activate || true) && ray stop
-    # We need to make sure RAY_HEAD_IP env var is accessible
-    # after conda activate.
     - export RAY_HEAD_IP && echo "export RAY_HEAD_IP=$RAY_HEAD_IP" >> ~/.bashrc && (conda activate || true) && ulimit -n 65536; ray start --address=$RAY_HEAD_IP:6379 --object-manager-port=8076
 
 available_node_types:
   head_node_type:
     node_config:
-      InstanceType: m5.xlarge
+      InstanceType: Standard_D4ds_v5
       BlockDeviceMappings: &mount
       - DeviceName: /dev/sda1
         Ebs:
-            VolumeSize: 256
+            VolumeSize: 128
             VolumeType: gp3
     resources:
       head_node: 1
-      instance_type_m5: 1
-  gpu_worker_g5:
+      instance_type_d4_v5: 1
+  gpu_worker_nc4as_t4:
     node_config:
-      InstanceType: g5.12xlarge
+      InstanceType: Standard_NC4as_T4_v3
       BlockDeviceMappings: *mount
     resources:
       worker_node: 1
-      instance_type_g5: 1
-      accelerator_type_a10: 1
+      instance_type_nc4as_t4_v3: 1
+      accelerator_type_t4: 1
     min_workers: 0
-    max_workers: 8
-  gpu_worker_p4d:
-    node_config:
-      InstanceType: p4d.24xlarge
-      BlockDeviceMappings: *mount
-    resources:
-      worker_node: 1
-      instance_type_p4d: 1
-      accelerator_type_a100_40g: 1
-    min_workers: 0
-    max_workers: 8
-  gpu_worker_p4de:
-    node_config:
-      InstanceType: p4de.24xlarge
-      BlockDeviceMappings: *mount
-    resources:
-      worker_node: 1
-      instance_type_p4de: 1
-      accelerator_type_a100_80g: 1
-    min_workers: 0
-    max_workers: 8
+    max_workers: 4
   cpu_worker:
     node_config:
-      InstanceType: m5.xlarge
+      InstanceType: Standard_D4ds_v5
       BlockDeviceMappings: *mount
     resources:
       worker_node: 1
-      instance_type_m5: 1
-      accelerator_type_cpu: 1
+      instance_type_d4_v5: 1
+      accelerator_type_cpu: 4
     min_workers: 0
-    max_workers: 16
+    max_workers: 3
 head_node_type: head_node_type
