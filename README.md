@@ -370,3 +370,5 @@ Note : Amazon Light GPT is  no longer working it may be private or private by Am
 
 
 similar to EBS we have azure manage disk 
+
+Now need to perform steps accordingly to readme
